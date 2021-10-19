@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 		{
 			cout << "Warning: no % in format, simulate may fail." << endl;
 		}
-		sprintf_s(buffer, 256, file_format.c_str(), file_idx);
+		snprintf(buffer, 256, file_format.c_str(), file_idx);
 
 		string input_file = buffer;
 		img = imread(input_file, 0);
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 
 			// load next image, break when empty
 			file_idx++;
-			sprintf_s(buffer, 256, file_format.c_str(), file_idx);
+			snprintf(buffer, 256, file_format.c_str(), file_idx);
 			input_file = buffer;
 			img = imread(input_file, 0);
 			if (img.empty() || file_idx >= END_IDX)

@@ -107,9 +107,9 @@ inline double Simulatorbase::find_result(double x1, double x2, double y1, double
 	double res1 = (-b + sqrt(b*b + k*c)) / k;
 	double res2 = (-b - sqrt(b*b + k*c)) / k;
 	
-	if(res1 >= x1 && res1 <= x2 && _finite(res1))
+	if(res1 >= x1 && res1 <= x2 && finite(res1))
 		return res1;
-	else if(res2 >= x1 && res2 <= x2 && _finite(res2))
+	else if(res2 >= x1 && res2 <= x2 && finite(res2))
 		return res2;
 	else return -1;
 }

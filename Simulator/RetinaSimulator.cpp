@@ -192,7 +192,7 @@ void RetinaSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 	
 	for (const auto hev : HybridEvents)
 	{
-		if (!_finite(hev.t))
+		if (!finite(hev.t))
 		{
 			int idx = hev.x * height + hev.y;
 			Accumulator_b[idx] = Accumulator_d[idx] = 0;

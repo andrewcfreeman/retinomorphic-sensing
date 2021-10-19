@@ -91,7 +91,7 @@ void FSMSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 
 	for (const auto fev : FSMEvents)
 	{
-		if (!_finite(fev.t))
+		if (!finite(fev.t))
 		{
 			int idx = fev.x * height + fev.y;
 			accumulator[idx] = 0;

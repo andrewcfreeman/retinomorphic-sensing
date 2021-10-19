@@ -131,7 +131,7 @@ void DAVISSimulator::SimulateImageBlur(cv::Mat& img)
 			}
 		}
 		char buffer[256];
-		sprintf_s(buffer, 256, file_fmt.c_str(), frames / merge_image_frames);
+		snprintf(buffer, 256, file_fmt.c_str(), frames / merge_image_frames);
 		cv::imwrite(buffer, img);
 	}
 }
