@@ -27,7 +27,7 @@ void ReconCeleX::GenerateImages(int totalframes, std::ifstream& Eventfile)
 	while(1)
 	{
 		Eventfile.getline(buffer, 256, ',');
-		int succ = sscanf_s(buffer, "%d %d %lf %d %d", &x, &y, &t, &p, &val);
+		int succ = sscanf(buffer, "%d %d %lf %d %d", &x, &y, &t, &p, &val);
 		if (succ != 5)
 		{
 			std::cout << succ << std::endl;
@@ -39,7 +39,7 @@ void ReconCeleX::GenerateImages(int totalframes, std::ifstream& Eventfile)
 			std::cout << x << " " << y << " " << t << " " << totalframes << std::endl;
 			break;
 		}
-		if (x < 0 || y < 0 || x >= width || y >= height || !_finite(t))
+		if (x < 0 || y < 0 || x >= width || y >= height || !finite(t))
 		{
 			continue;
 		}
@@ -48,7 +48,7 @@ void ReconCeleX::GenerateImages(int totalframes, std::ifstream& Eventfile)
 		{
 			for (int i = curmin; i <= t; i++)
 			{
-				sprintf_s(buffer, 256, output_fmt.c_str(), i);
+				snprintf(buffer, 256, output_fmt.c_str(), i);
 				cv::imwrite(buffer, out_img);
 			}
 			curmin = t + 1;
@@ -58,7 +58,7 @@ void ReconCeleX::GenerateImages(int totalframes, std::ifstream& Eventfile)
 	}
 	for (int i = curmin; i < totalframes; i++)
 	{
-		sprintf_s(buffer, 256, output_fmt.c_str(), i);
+		snprintf(buffer, 256, output_fmt.c_str(), i);
 		cv::imwrite(buffer, out_img);
 	}
 }
