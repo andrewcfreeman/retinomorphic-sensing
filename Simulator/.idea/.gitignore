@@ -291,6 +291,7 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 workspace.xml
+cmake-build-debug
 
 # Matlab data
 *.mat
