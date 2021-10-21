@@ -33,7 +33,7 @@ void ReconDAVIS::GenerateImages(int totalframes, std::ifstream& Eventfile)
 		if (x < 0 || y < 0 || x >= width || y >= height || !finite(t))
 		{
 			continue;
-		}
+		} 
 
 		if (t >= curmin)
 		{
