@@ -6,7 +6,7 @@ void ReconDAVIS::GenerateImages(int totalframes, std::ifstream& Eventfile)
 
 	char buffer[256];
 	int merge_idx = 0;
-	snprintf(buffer, 256, input_fmt.c_str(), merge_idx);
+	snprintf(buffer, 256, input_fmt.c_str(), merge_idx+1);
 	std::string input_file = buffer;
 	out_img = imread(input_file, 0);
 	
@@ -39,10 +39,10 @@ void ReconDAVIS::GenerateImages(int totalframes, std::ifstream& Eventfile)
 		{
 			for (int i = curmin; i <= t; i++)
 			{
-				if (i >= (merge_idx + 1) * merge_image_frames)
+				if (i >= (merge_idx + 1) * merge_image_frames) // If we've crossed the temporal threshold for a new active frame
 				{
 					merge_idx++;
-					snprintf(buffer, 256, input_fmt.c_str(), merge_idx);
+					snprintf(buffer, 256, input_fmt.c_str(), merge_idx+1);
 					input_file = buffer;
 					out_img = cv::imread(input_file, 0);
 				}
@@ -65,7 +65,7 @@ void ReconDAVIS::GenerateImages(int totalframes, std::ifstream& Eventfile)
 		if (i >= (merge_idx + 1) * merge_image_frames)
 		{
 			merge_idx++;
-			snprintf(buffer, 256, input_fmt.c_str(), merge_idx);
+			snprintf(buffer, 256, input_fmt.c_str(), merge_idx+1);
 			input_file = buffer;
 			out_img = cv::imread(input_file, 0);
 		}

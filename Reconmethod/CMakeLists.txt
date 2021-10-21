@@ -17,7 +17,7 @@ add_executable(Reconmethod
         ReconDAVIS.cpp
         ReconFSM.cpp
         Reconmain.cpp
-        ReconRetina.cpp)
+        ReconRetina.cpp DVSToADDERTranscoder.cpp DVSToADDERTranscoder.h)
 
 target_include_directories(Reconmethod PRIVATE ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(Reconmethod stdc++fs ${OpenCV_LIBS})
