@@ -11,6 +11,8 @@ xxx.exe (the running file)
 FFMPEG video to png images example: ffmpeg -i ./video.mp4 -start_number 0 -s 1280x720 ./0_index/%04d.png
 (Must start at index 0)
 
+-m must match that of the source
+
 Example arguments:
 -i
 "/home/andrew/Code/retinomorphic-sensing/Simulator/cmake-build-debug/out_DAVIS_out.bin"
