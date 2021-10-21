@@ -11,3 +11,27 @@ xxx.exe (the running file)
 FFMPEG video to png images example: ffmpeg -i ./video.mp4 -start_number 0 -s 1280x720 ./0_index/%04d.png
 (Must start at index 0)
 
+Example arguments:
+-i
+"/home/andrew/Code/retinomorphic-sensing/Simulator/cmake-build-debug/out_DAVIS_out.bin"
+-w
+1280
+-h
+720
+-f
+499
+-o
+"/home/andrew/Code/retinomorphic-sensing/Simulator/cmake-build-debug/recon%06d.png"
+-t
+1720
+-d
+10
+-y
+2
+-z
+6
+-a
+"/home/andrew/Code/retinomorphic-sensing/Simulator/cmake-build-debug/out\DAVIS\merge%06d.png"
+-m
+20
+

@@ -28,7 +28,6 @@ void DAVISSimulator::resetMemory(int width, int height, int channels)
 
 int DAVISSimulator::SimulateEventFromImage(cv::Mat& img, std::ofstream& outstream)
 {
-
 	if(channels == 1)
 	{
 		SimulateoneChannel(img, outstream);

@@ -6,3 +6,21 @@ xxx.exe (the running file)
 -s -e the start and end index of the input images
 -o output data stream file
 -i -d thelta_i and thelta_d
+
+
+Example arguments:
+-f
+"/home/andrew/Documents/CableFrames/0_index/%04d.png"
+-u
+-o
+out.bin
+-i
+1720
+-d
+10
+-m
+"/home/andrew/Code/retinomorphic-sensing/Simulator/cmake-build-debug/out\DAVIS\merge%06d.png"
+-s
+0
+-e
+500
