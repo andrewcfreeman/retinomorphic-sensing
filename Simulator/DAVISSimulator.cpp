@@ -44,6 +44,11 @@ int DAVISSimulator::SimulateEventFromImage(cv::Mat& img, std::ofstream& outstrea
 
 void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 {
+    /*
+     * Lastgray holds the intensities of the most recently read input image
+     * DVSsave is an integer array of the intensities of the most recently fired event for each pixel
+     */
+
 	if (frames == 0)
 	{
         for (int y = 0; y < height; y++)
@@ -51,7 +56,9 @@ void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
             for (int x = 0; x < width; x++)
             {
 				uint8_t _gray = img.at<uchar>(y, x);
-                Lastgray[x * height + y] = DVSsave[x * height + y] = Clamp(_gray, 0, 255);
+
+                // Set Lastgray intensity and DVSsave value to the first input image's pixel values
+                Lastgray[x * height + y] = DVSsave[x * height + y] = Clamp(_gray, 0, 255); // Column-order indexing??
 			}
 		}
 		frames++;
@@ -79,7 +86,7 @@ void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 					int strange_events = (Lastgray[idx] - DVSsave[idx]) * DVSpolar / DVSthres;
 					for (int i = 0; i < strange_events; ++i)
 					{
-						Eventrecord dev(i, y, frames, DVSpolar);
+						Eventrecord dev(x, y, frames, DVSpolar);
 						DVSEvents.push_back(dev);
 						DVSsave[idx] = Lastgray[idx];
 					}
@@ -87,6 +94,17 @@ void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 				else
 				{
 					int current_event = DVSsave[idx] + DVSthres * DVSpolar;
+
+                    /*
+                     * Get the proportion of how much of the current frame's time that this event constitutes
+                     * In ADDER transcoder, if there are 1000 ticks per input frame, then a DVS event with t = 4.85,
+                     * with its previous event having a t = 4.2, should have a delta_t of...
+                     * (4.85 - 4.2) * 1000 = 650 ticks
+                     *
+                     * The intensity for that event should be...
+                     * last_intensity +/- DVS_threshold
+                     * (input this as the photon count)
+                     */
 					double start_time = (current_event - Lastgray[idx]) / (double)total_change;
 					while(start_time >= 0 && start_time <= 1)
 					{
