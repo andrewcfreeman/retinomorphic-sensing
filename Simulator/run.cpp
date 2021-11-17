@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 		{
 			cout << "Warning: no % in format, simulate may fail." << endl;
 		}
-		sprintf_s(buffer, 256, file_format.c_str(), file_idx);
+		snprintf(buffer, 256, file_format.c_str(), file_idx);
 
 		string input_file = buffer;
 		img = imread(input_file, 0);
@@ -65,25 +65,27 @@ int main(int argc, char** argv)
 		info_outstream << "WIDTH:" << WIDTH << " HEIGHT:" << HEIGHT << endl;
 		info_outstream << "FILE:" << file_format << endl;
 
-		RetinaSimulator Retina_simulator(WIDTH, HEIGHT, CHANNELS, IVSTHRES, DVSTHRES, WIN_SIZE);
-		FSMSimulator FSM_simulator(WIDTH, HEIGHT, CHANNELS, IVSTHRES);
+
+		/* Create simulator objects */
+//		RetinaSimulator Retina_simulator(WIDTH, HEIGHT, CHANNELS, IVSTHRES, DVSTHRES, WIN_SIZE);
+//		FSMSimulator FSM_simulator(WIDTH, HEIGHT, CHANNELS, IVSTHRES);
 		DAVISSimulator DAVIS_simulator(WIDTH, HEIGHT, CHANNELS, DVSTHRES, MERGE_NUM, DAVIS_out);
 		ATISSimulator ATIS_simulator(WIDTH, HEIGHT, CHANNELS, IVSTHRES, DVSTHRES, MAX_INTE_TIME);
 		CeleXSimulator CeleX_simulator(WIDTH, HEIGHT, CHANNELS, DVSTHRES);
 		VidarSimulator Vidar_simulator(WIDTH, HEIGHT, CHANNELS, IVSTHRES, true, LINEAR_FRAMES);
 
 		std::ofstream Retina_outstream;
-		Retina_outstream.open("out\\Retina_" + output_filename, std::ios::binary);
+//		Retina_outstream.open("out_Retina_" + output_filename, std::ios::binary);
 		std::ofstream FSM_outstream;
-		//FSM_outstream.open("out\\FSM_" + output_filename, std::ios::binary);
+		//FSM_outstream.open("out_FSM_" + output_filename, std::ios::binary);
 		std::ofstream DAVIS_outstream;
-		//DAVIS_outstream.open("out\\DAVIS_" + output_filename, std::ios::binary);
+		DAVIS_outstream.open("out_DAVIS_" + output_filename, std::ios::binary);
 		std::ofstream ATIS_outstream;
-		//ATIS_outstream.open("out\\ATIS_" + output_filename, std::ios::binary);
+		//ATIS_outstream.open("out_ATIS_" + output_filename, std::ios::binary);
 		std::ofstream CeleX_outstream;
-		//CeleX_outstream.open("out\\CeleX_" + output_filename, std::ios::binary);
+		//CeleX_outstream.open("out_CeleX_" + output_filename, std::ios::binary);
 		std::ofstream Vidar_outstream;
-		//Vidar_outstream.open("out\\Vidar_" + output_filename, std::ios::binary);
+		//Vidar_outstream.open("out_Vidar_" + output_filename, std::ios::binary);
 
 		Size ResizeSize = Size(WIDTH, HEIGHT);
 
@@ -93,17 +95,19 @@ int main(int argc, char** argv)
 			{
 				resize(img, img, ResizeSize);
 			}
-			Retina_simulator.SimulateEventFromImage(img, Retina_outstream);
+            /* Simulate. Uncomment the type of simulation to use */
+
+//			Retina_simulator.SimulateEventFromImage(img, Retina_outstream);
 			//FSM_simulator.SimulateEventFromImage(img, FSM_outstream);
 			//ATIS_simulator.SimulateEventFromImage(img, ATIS_outstream);
 			//CeleX_simulator.SimulateEventFromImage(img, CeleX_outstream);
 			//Vidar_simulator.SimulateEventFromImage(img, Vidar_outstream);
-			//DAVIS_simulator.SimulateEventFromImage(img, DAVIS_outstream);
+			DAVIS_simulator.SimulateEventFromImage(img, DAVIS_outstream);
 			//remember DAVIS simulating last, it may change "img"
 
 			// load next image, break when empty
 			file_idx++;
-			sprintf_s(buffer, 256, file_format.c_str(), file_idx);
+			snprintf(buffer, 256, file_format.c_str(), file_idx);
 			input_file = buffer;
 			img = imread(input_file, 0);
 			if (img.empty() || file_idx >= END_IDX)
@@ -117,8 +121,8 @@ int main(int argc, char** argv)
 				cout << file_idx << " frames finished!" << endl;
 			}
 		}
-		Retina_outstream.close();
-		Vidar_outstream.close();
+//		Retina_outstream.close();
+//		Vidar_outstream.close();
 		DAVIS_outstream.close();
 		ATIS_outstream.close();
 		FSM_outstream.close();
@@ -127,9 +131,9 @@ int main(int argc, char** argv)
 		cout << file_idx - START_IDX << " image(s) is(are) simulated in total." << endl;
 		info_outstream << file_idx - START_IDX << " image(s) is(are) simulated in total." << endl;
 
-		info_outstream << "RetinaSimulaor: D-event: " << Retina_simulator.D_event << " I_event: " << Retina_simulator.I_event << endl;
+//		info_outstream << "RetinaSimulaor: D-event: " << Retina_simulator.D_event << " I_event: " << Retina_simulator.I_event << endl;
 		info_outstream << "ATISSimulaor: D-event: " << ATIS_simulator.D_event << " I_event: " << ATIS_simulator.I_event << endl;
-		info_outstream << "FSMSimulaor: D-event: " << FSM_simulator.D_event << " I_event: " << FSM_simulator.I_event << endl;
+//		info_outstream << "FSMSimulaor: D-event: " << FSM_simulator.D_event << " I_event: " << FSM_simulator.I_event << endl;
 		info_outstream << "DAVISSimulaor: D-event: " << DAVIS_simulator.D_event << " I_event: " << DAVIS_simulator.I_event << endl;
 		info_outstream << "CeleXSimulaor: D-event: " << CeleX_simulator.D_event << " I_event: " << CeleX_simulator.I_event << endl;
 		info_outstream << "VidarSimulaor: D-event: " << Vidar_simulator.D_event << " I_event: " << Vidar_simulator.I_event << endl;

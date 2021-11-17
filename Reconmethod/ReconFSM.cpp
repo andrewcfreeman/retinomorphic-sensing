@@ -30,7 +30,7 @@ void ReconFSM::GenerateImages(int totalframes, std::ifstream& Eventfile)
 	{
 		// Eventfile >> x >> y >> t >> p >> comma;
 		Eventfile.getline(buffer, 256, ',');
-		int succ = sscanf_s(buffer, "%d %d %lf %d", &x, &y, &t, &p);
+		int succ = sscanf(buffer, "%d %d %lf %d", &x, &y, &t, &p);
 		if (succ != 4)
 		{
 			std::cout << succ << std::endl;
@@ -42,7 +42,7 @@ void ReconFSM::GenerateImages(int totalframes, std::ifstream& Eventfile)
 			std::cout << x << " " << y << " " << t << " " << totalframes << std::endl;
 			break;
 		}
-		if (x < 0 || y < 0 || x >= width || y >= height || !_finite(t))
+		if (x < 0 || y < 0 || x >= width || y >= height || !finite(t))
 		{
 			continue;
 		}
@@ -58,7 +58,7 @@ void ReconFSM::GenerateImages(int totalframes, std::ifstream& Eventfile)
 	}
 	for (int i = 0; i < totalframes; i++)
 	{
-		sprintf_s(buffer, 256, output_fmt.c_str(), i);
+		snprintf(buffer, 256, output_fmt.c_str(), i);
 		cv::imwrite(buffer, *out_img[i]);
 	}
 }

@@ -31,7 +31,7 @@ void ReconATIS::GenerateImages(int totalframes, std::ifstream& Eventfile)
 		cnt++;
 		// Eventfile >> x >> y >> t >> p >> comma;
 		Eventfile.getline(buffer, 256, ',');
-		int succ = sscanf_s(buffer, "%d %d %lf %d", &x, &y, &t, &p);
+		int succ = sscanf(buffer, "%d %d %lf %d", &x, &y, &t, &p);
 		if (succ != 4)
 		{
 			std::cout << succ << std::endl;
@@ -49,7 +49,7 @@ void ReconATIS::GenerateImages(int totalframes, std::ifstream& Eventfile)
 			int i;
 			for(i = curmin; i + max_inte_time < t; i++)
 			{
-				sprintf_s(buffer, 256, output_fmt.c_str(), i);
+				snprintf(buffer, 256, output_fmt.c_str(), i);
 				cv::imwrite(buffer, *out_img[i % opti_size]);
 
 				for (int xx = 0; xx < width; xx++)
@@ -80,7 +80,7 @@ void ReconATIS::GenerateImages(int totalframes, std::ifstream& Eventfile)
 	
 	for (int i = curmin; i < min(curmin + opti_size, totalframes); i++)
 	{
-		sprintf_s(buffer, 256, output_fmt.c_str(), i);
+		snprintf(buffer, 256, output_fmt.c_str(), i);
 		cv::imwrite(buffer, *out_img[i % opti_size]);
 	}
 	

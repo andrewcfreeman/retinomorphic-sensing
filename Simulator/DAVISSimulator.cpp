@@ -28,7 +28,6 @@ void DAVISSimulator::resetMemory(int width, int height, int channels)
 
 int DAVISSimulator::SimulateEventFromImage(cv::Mat& img, std::ofstream& outstream)
 {
-
 	if(channels == 1)
 	{
 		SimulateoneChannel(img, outstream);
@@ -45,14 +44,21 @@ int DAVISSimulator::SimulateEventFromImage(cv::Mat& img, std::ofstream& outstrea
 
 void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 {
+    /*
+     * Lastgray holds the intensities of the most recently read input image
+     * DVSsave is an integer array of the intensities of the most recently fired event for each pixel
+     */
+
 	if (frames == 0)
 	{
-		for (int i = 0; i < width; i++)
-		{
-			for (int j = 0; j < height; j++)
-			{
-				uint8_t _gray = img.at<uchar>(j, i);							
-				Lastgray[i * height	+ j] = DVSsave[i * height + j] = Clamp(_gray, 0, 255);
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+				uint8_t _gray = img.at<uchar>(y, x);
+
+                // Set Lastgray intensity and DVSsave value to the first input image's pixel values
+                Lastgray[x * height + y] = DVSsave[x * height + y] = Clamp(_gray, 0, 255); // Column-order indexing??
 			}
 		}
 		frames++;
@@ -60,16 +66,18 @@ void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 	}
 
 	std::vector<Eventrecord> DVSEvents;
-	for (int j = 0; j < height; j++)
+	for (int y = 0; y < height; y++)
 	{
-		for (int i = 0; i < width; i++)
+		for (int x = 0; x < width; x++)
 		{		
-			int idx = i * height + j;
-			int value = Clamp(img.at<uchar>(j, i), 0, 255);
+			int idx = x * height + y;   // Pixel index
+			int value = Clamp(img.at<uchar>(y, x), 0, 255); // Image value at this pixel
 
 			// DVS part
 			int DVSpolar = 0;
 			int total_change = value - Lastgray[idx];
+
+            // If the input image value represents a contrast difference large enough that we need to fire an event...
 			if (value - DVSthres >= DVSsave[idx] || value + DVSthres <= DVSsave[idx])
 			{
 				DVSpolar = value > DVSsave[idx] ? 1 : -1;
@@ -78,7 +86,7 @@ void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 					int strange_events = (Lastgray[idx] - DVSsave[idx]) * DVSpolar / DVSthres;
 					for (int i = 0; i < strange_events; ++i)
 					{
-						Eventrecord dev(i, j, frames, DVSpolar);
+						Eventrecord dev(x, y, frames, DVSpolar);
 						DVSEvents.push_back(dev);
 						DVSsave[idx] = Lastgray[idx];
 					}
@@ -86,10 +94,21 @@ void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 				else
 				{
 					int current_event = DVSsave[idx] + DVSthres * DVSpolar;
+
+                    /*
+                     * Get the proportion of how much of the current frame's time that this event constitutes
+                     * In ADDER transcoder, if there are 1000 ticks per input frame, then a DVS event with t = 4.85,
+                     * with its previous event having a t = 4.2, should have a delta_t of...
+                     * (4.85 - 4.2) * 1000 = 650 ticks
+                     *
+                     * The intensity for that event should be...
+                     * last_intensity +/- DVS_threshold
+                     * (input this as the photon count)
+                     */
 					double start_time = (current_event - Lastgray[idx]) / (double)total_change;
 					while(start_time >= 0 && start_time <= 1)
 					{
-						Eventrecord dev(i, j, frames + start_time, DVSpolar);
+						Eventrecord dev(x, y, frames + start_time, DVSpolar);
 						DVSEvents.push_back(dev);
 						DVSsave[idx] = current_event;
 						start_time += DVSthres * DVSpolar / (double)total_change;
@@ -110,28 +129,28 @@ void DAVISSimulator::SimulateoneChannel(cv::Mat& img, std::ofstream& outstream)
 
 void DAVISSimulator::SimulateImageBlur(cv::Mat& img)
 {
-	for (int j = 0; j < height; j++)
+	for (int y = 0; y < height; y++)
 	{
-		for (int i = 0; i < width; i++)
+		for (int x = 0; x < width; x++)
 		{		
-			int idx = i * height + j;
-			int value = Clamp(img.at<uchar>(j, i), 0, 255);
+			int idx = x * height + y;
+			int value = Clamp(img.at<uchar>(y, x), 0, 255);
 			accumulator[idx] += value;
 		}
 	}
 	if (frames % merge_image_frames == 0)
 	{
-		for (int j = 0; j < height; j++)
+		for (int y = 0; y < height; y++)
 		{
-			for (int i = 0; i < width; i++)
+			for (int x = 0; x < width; x++)
 			{		
-				int idx = i * height + j;
-				img.at<uchar>(j, i) = accumulator[idx] / merge_image_frames;
+				int idx = x * height + y;
+				img.at<uchar>(y, x) = accumulator[idx] / merge_image_frames;
 				accumulator[idx] = 0;
 			}
 		}
 		char buffer[256];
-		sprintf_s(buffer, 256, file_fmt.c_str(), frames / merge_image_frames);
+		snprintf(buffer, 256, file_fmt.c_str(), frames / merge_image_frames);
 		cv::imwrite(buffer, img);
 	}
 }

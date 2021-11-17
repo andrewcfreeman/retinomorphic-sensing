@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstring>
 #include <random>
+#include "DVSToADDERTranscoder.h"
 
 using namespace cv;
 
@@ -55,9 +56,12 @@ class ReconDAVIS : public Reconbase
 private:
 	int merge_image_frames;
 	std::string input_fmt;
+	DVSToADDERTranscoder *transcoder;
 public:
 	ReconDAVIS(int _w = 400, int _h = 250, int _Dt = 25, int _mif = 5, std::string _out = "", std::string _in = "") :
-		Reconbase(_w, _h, 0, _Dt, _out), merge_image_frames(_mif), input_fmt(_in) {}
+		Reconbase(_w, _h, 0, _Dt, _out), merge_image_frames(_mif), input_fmt(_in) {
+//	    transcoder = new DVSToADDERTranscoder(_w, _h);
+	}
 	virtual void GenerateImages(int totalframes, std::ifstream& Eventfile);
 };
 

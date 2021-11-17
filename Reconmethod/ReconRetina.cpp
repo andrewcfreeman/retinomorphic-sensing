@@ -51,7 +51,7 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 		cnt++;
 		// EventsFile >> x >> y >> t >> p >> comma;
 		EventsFile.getline(buffer, 256, ',');
-		int succ = sscanf_s(buffer, "%d %d %lf %d", &x, &y, &t, &p);
+		int succ = sscanf(buffer, "%d %d %lf %d", &x, &y, &t, &p);
 		if (succ != 4)
 		{
 			std::cout << succ << std::endl;
@@ -65,7 +65,7 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 			break;
 		}
 
-		if (x < 0 || y < 0 || x >= width || y >= height || !_finite(t))
+		if (x < 0 || y < 0 || x >= width || y >= height || !finite(t))
 		{
 			continue;
 		}
@@ -200,7 +200,7 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 	}
 	for (int i = 0; i < totalframes; i++)
 	{
-		sprintf_s(buffer, 256, output_fmt.c_str(), i);
+		snprintf(buffer, 256, output_fmt.c_str(), i);
 		cv::imwrite(buffer, *out_img[i]);
 	}
 }
