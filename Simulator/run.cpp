@@ -74,8 +74,8 @@ int main(int argc, char** argv)
 		CeleXSimulator CeleX_simulator(WIDTH, HEIGHT, CHANNELS, DVSTHRES);
 		VidarSimulator Vidar_simulator(WIDTH, HEIGHT, CHANNELS, IVSTHRES, true, LINEAR_FRAMES);
 
-//		std::ofstream Retina_outstream;
-//		Retina_outstream.open("out_Retina_" + output_filename, std::ios::binary);
+		std::ofstream Retina_outstream;
+		Retina_outstream.open("out_Retina_" + output_filename, std::ios::binary);
 //		std::ofstream FSM_outstream;
 //		FSM_outstream.open("out_FSM_" + output_filename, std::ios::binary);
 //		std::ofstream DAVIS_outstream;
@@ -97,11 +97,11 @@ int main(int argc, char** argv)
 			}
             /* Simulate. Uncomment the type of simulation to use */
 
-//			Retina_simulator.SimulateEventFromImage(img, Retina_outstream);
+			Retina_simulator.SimulateEventFromImage(img, Retina_outstream);
 			//FSM_simulator.SimulateEventFromImage(img, FSM_outstream);
 			//ATIS_simulator.SimulateEventFromImage(img, ATIS_outstream);
 			//CeleX_simulator.SimulateEventFromImage(img, CeleX_outstream);
-			Vidar_simulator.SimulateEventFromImage(img, Vidar_outstream);
+//			Vidar_simulator.SimulateEventFromImage(img, Vidar_outstream);
 //			DAVIS_simulator.SimulateEventFromImage(img, DAVIS_outstream);
 			//remember DAVIS simulating last, it may change "img"
 
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
 				cout << file_idx << " frames finished!" << endl;
 			}
 		}
-//		Retina_outstream.close();
+		Retina_outstream.close();
 		Vidar_outstream.close();
 //		DAVIS_outstream.close();
 //		ATIS_outstream.close();
