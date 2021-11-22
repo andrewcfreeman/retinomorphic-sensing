@@ -17,6 +17,7 @@ void VidarSimulator::resetMemory(int width, int height, int channels)
 		return;
 	}
 	accumulator.resize(width * height, 0);
+    Lastgray.resize(width * height, 0);
 }
 
 int VidarSimulator::SimulateEventFromImage(cv::Mat& img, ::std::ofstream& outstream)

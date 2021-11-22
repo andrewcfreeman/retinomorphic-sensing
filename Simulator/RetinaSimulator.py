@@ -139,10 +139,10 @@ class Pixel_Simulator:
 
 		# IVS succeeded and DVS failed
 		if ans >= 0 and DVSpolar == 0:
-			status = torch.from_numpy(np.array([[[ans - self.Windowsize, 1.0]]]))
-			status = torch.tensor(status, dtype = torch.float32)
-			hidden = torch.from_numpy(np.array([[[self.Reftime, 0.0]]]))
-			hidden = torch.tensor(hidden, dtype = torch.float32)
+			status = torch.from_numpy(np.array([[[ans - self.Windowsize, 1.0]]])).float()
+			# status = torch.tensor(status, dtype=torch.float32).clone().detach()
+			hidden = torch.from_numpy(np.array([[[self.Reftime, 0.0]]])).float()
+			# hidden = torch.tensor(hidden.clone().detach(), dtype=torch.float32)
 			out, hidden = self.Control.forward(status, hidden)
 
 			symbol = out.detach().numpy().max()
@@ -158,10 +158,10 @@ class Pixel_Simulator:
 			self.Accumulator_b += (self.Lastgray + value) / 2.0
 			self.Accumulator_d += 255 - (self.Lastgray + value) / 2.0
 			for curr_t in DVS_times:
-				status = torch.from_numpy(np.array([[[curr_t - self.Windowsize, -1.0]]]))
-				status = torch.tensor(status, dtype = torch.float32)
-				hidden = torch.from_numpy(np.array([[[self.Reftime, 0.0]]]))
-				hidden = torch.tensor(hidden, dtype = torch.float32)
+				status = torch.from_numpy(np.array([[[curr_t - self.Windowsize, -1.0]]])).float()
+				# status = torch.tensor(status, dtype = torch.float32)
+				hidden = torch.from_numpy(np.array([[[self.Reftime, 0.0]]])).float()
+				# hidden = torch.tensor(hidden, dtype = torch.float32)
 				out, hidden = self.Control.forward(status, hidden)
 				symbol = out.detach().numpy().max()
 				if symbol > 0.5 + eps:
@@ -175,10 +175,10 @@ class Pixel_Simulator:
 
 		# IVS succeeded and DVS succeeded
 		if ans >= 0 and DVSpolar != 0:
-			status = torch.from_numpy(np.array([[[ans - self.Windowsize, 1.0]]]))
-			status = torch.tensor(status, dtype = torch.float32)
-			hidden = torch.from_numpy(np.array([[[self.Reftime, 0.0]]]))
-			hidden = torch.tensor(hidden, dtype = torch.float32)
+			status = torch.from_numpy(np.array([[[ans - self.Windowsize, 1.0]]])).float()
+			# status = torch.tensor(status, dtype = torch.float32)
+			hidden = torch.from_numpy(np.array([[[self.Reftime, 0.0]]])).float()
+			# hidden = torch.tensor(hidden, dtype = torch.float32)
 			out, hidden = self.Control.forward(status, hidden)
 
 			symbol = out.detach().numpy().max()
@@ -195,10 +195,10 @@ class Pixel_Simulator:
 					# in case violate the machenism
 					self.DVSsave += self.DVSthres * DVSpolar
 				else:
-					status = torch.from_numpy(np.array([[[curr_t - self.Windowsize, -1.0]]]))
-					status = torch.tensor(status, dtype = torch.float32)
-					hidden = torch.from_numpy(np.array([[[self.Reftime, 0.0]]]))
-					hidden = torch.tensor(hidden, dtype = torch.float32)
+					status = torch.from_numpy(np.array([[[curr_t - self.Windowsize, -1.0]]])).float()
+					# status = torch.tensor(status, dtype = torch.float32)
+					hidden = torch.from_numpy(np.array([[[self.Reftime, 0.0]]])).float()
+					# hidden = torch.tensor(hidden, dtype = torch.float32)
 					out, hidden = self.Control.forward(status, hidden)
 					symbol = out.detach().numpy().max()
 					if symbol > 0.5 + eps:
@@ -245,15 +245,18 @@ class Sensor_Simulator:
 				value = img[i][j]
 				eventlist = self.Pixel_List[i][j].Process_Pixel(value)
 				for event in eventlist:
-					fp.write(str(i) + " " + str(j) + " " + str(event[0]) + " " + str(event[1]) + ", ")
+					fp.write(str(j) + " " + str(i) + " " + str(event[0]) + " " + str(event[1]) + ", ")
 		fp.close()
 
 if __name__ == '__main__':
-	filefmt = "E:\\E\\AERdata\\high-speed_videos\\bullet\\bullet%06d.png"
-	output = "test.dat"
-	end = 10
-	Simulator = Sensor_Simulator(Width = 640, Height = 206, IVSthres = 1020.0, DVSthres = 10, Windowsize = 3.8, Name = "default")
+	# filefmt = "E:\\E\\AERdata\\high-speed_videos\\bullet\\bullet%06d.png"
+	filefmt = "/home/andrew/Documents/RetinomorphicDataset/Bullet/%06d.png"
+	output = "/home/andrew/Documents/RetinomorphicDataset/Bullet/test.dat"
+	end = 982
+	# Simulator = Sensor_Simulator(Width = 640, Height = 206, IVSthres = 1020.0, DVSthres = 10, Windowsize = 3.8, Name = "default")
+	Simulator = Sensor_Simulator(Width=640, Height=200, IVSthres=1020.0, DVSthres=10, Windowsize=3.8, Name="default")
 	for i in range(end):
-		filename = ("E:\\E\\AERdata\\high-speed_videos\\bullet\\bullet%06d.png") % (i + 1)
+		# filename = ("E:\\E\\AERdata\\high-speed_videos\\bullet\\bullet%06d.png") % (i + 1)
+		filename = ("/home/andrew/Documents/RetinomorphicDataset/Bullet/%06d.png") % (i + 1)
 		Simulator.Process_Image(filename, output)
 		print(i)

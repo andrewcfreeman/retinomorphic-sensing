@@ -226,8 +226,10 @@ public:
 	{
 		if (IVSthres < detect_wsize * 255)
 		{
+            std::cout << "Input wsize: " << detect_wsize << std::endl;
 			std::cout << "detect_wsize too large\n";
 			detect_wsize = IVSthres / 510;
+            std::cout << "New wsize: " << detect_wsize << std::endl;
 		}
 		resetMemory(width, height, channels);
 	}

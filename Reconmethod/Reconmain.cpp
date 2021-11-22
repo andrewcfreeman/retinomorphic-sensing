@@ -97,6 +97,13 @@ int main(int argc, char** argv)
 		}
 	}
 	cout << "Width: " << Width << " Height: " << Height << endl;
+    if (IVSthres < win_size * 255)
+    {
+        std::cout << "Input wsize: " << win_size << std::endl;
+        std::cout << "detect_wsize too large\n";
+        win_size = IVSthres / 510;
+        std::cout << "New wsize: " << win_size << std::endl;
+    }
 	cout << "DVSthres: "  << DVSthres << " IVSthres: " << IVSthres << " detect_size: " << win_size << endl;
 
 	if (Width <= 0 || Height <= 0 || totalframes <= 0)
@@ -104,6 +111,8 @@ int main(int argc, char** argv)
 		cout << "Init image failed." << endl;
 		return 0;
 	}
+
+
 
 	Reconbase* Reconmethod;
 	switch (type)
