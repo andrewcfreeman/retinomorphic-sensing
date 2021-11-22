@@ -97,12 +97,12 @@ int main(int argc, char** argv)
 		}
 	}
 	cout << "Width: " << Width << " Height: " << Height << endl;
-    if (IVSthres < detect_wsize * 255)
+    if (IVSthres < win_size * 255)
     {
-        std::cout << "Input wsize: " << detect_wsize << std::endl;
+        std::cout << "Input wsize: " << win_size << std::endl;
         std::cout << "detect_wsize too large\n";
-        detect_wsize = IVSthres / 510;
-        std::cout << "New wsize: " << detect_wsize << std::endl;
+        win_size = IVSthres / 510;
+        std::cout << "New wsize: " << win_size << std::endl;
     }
 	cout << "DVSthres: "  << DVSthres << " IVSthres: " << IVSthres << " detect_size: " << win_size << endl;
 
