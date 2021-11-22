@@ -78,14 +78,14 @@ int main(int argc, char** argv)
 		Retina_outstream.open("out_Retina_" + output_filename, std::ios::binary);
 //		std::ofstream FSM_outstream;
 //		FSM_outstream.open("out_FSM_" + output_filename, std::ios::binary);
-//		std::ofstream DAVIS_outstream;
-//		DAVIS_outstream.open("out_DAVIS_" + output_filename, std::ios::binary);
+		std::ofstream DAVIS_outstream;
+		DAVIS_outstream.open("out_DAVIS_" + output_filename, std::ios::binary);
 //		std::ofstream ATIS_outstream;
 //		ATIS_outstream.open("out_ATIS_" + output_filename, std::ios::binary);
 //		std::ofstream CeleX_outstream;
 //		CeleX_outstream.open("out_CeleX_" + output_filename, std::ios::binary);
-		std::ofstream Vidar_outstream;
-		Vidar_outstream.open("out_Vidar_" + output_filename, std::ios::binary);
+//		std::ofstream Vidar_outstream;
+//		Vidar_outstream.open("out_Vidar_" + output_filename, std::ios::binary);
 
 		Size ResizeSize = Size(WIDTH, HEIGHT);
 
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 			//ATIS_simulator.SimulateEventFromImage(img, ATIS_outstream);
 			//CeleX_simulator.SimulateEventFromImage(img, CeleX_outstream);
 //			Vidar_simulator.SimulateEventFromImage(img, Vidar_outstream);
-//			DAVIS_simulator.SimulateEventFromImage(img, DAVIS_outstream);
+			DAVIS_simulator.SimulateEventFromImage(img, DAVIS_outstream);
 			//remember DAVIS simulating last, it may change "img"
 
 			// load next image, break when empty
@@ -122,8 +122,8 @@ int main(int argc, char** argv)
 			}
 		}
 		Retina_outstream.close();
-		Vidar_outstream.close();
-//		DAVIS_outstream.close();
+//		Vidar_outstream.close();
+		DAVIS_outstream.close();
 //		ATIS_outstream.close();
 //		FSM_outstream.close();
 //		CeleX_outstream.close();
