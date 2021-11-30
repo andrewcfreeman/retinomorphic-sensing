@@ -13,12 +13,12 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 
 	for (int i = 0; i < totalframes; i++)
 	{
-		out_img[i] = new Mat(Size(width, height), CV_8UC1);
+		out_img[i] = new Mat(Size(width, height), CV_16UC1);
 		for (int xx = 0; xx < width; xx++)
 			for (int yy = 0; yy < height; yy++)
-				(*out_img[i]).at<uchar>(yy, xx) = 0;
+				(*out_img[i]).at<uint16_t>(yy, xx) = 256;
 	}
-	
+
 	double* Lasttime;
 	double* Lastfinaltime;
 	int* LastIval;
@@ -58,7 +58,7 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 			std::cout << buffer << std::endl;
 			break;
 		}
-		
+
 		if (EventsFile.eof() || t >= totalframes)
 		{
 			std::cout << x << " " << y << " " << t << " " << totalframes << std::endl;
@@ -90,7 +90,7 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 			(*eventstack[idx]).push(devent);
 			Lasttime[idx] = t;
 		}
-		// I-event ?             
+		// I-event ?
 		else
 		{
 			double sevent_t = t;
@@ -99,12 +99,12 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 			// D+I format
 			if (!(*eventstack[idx]).empty())
 			{
-				// restore values between D and S 
+				// restore values between D and S
 				Eventrecord tmp = (*eventstack[idx]).top();
 				int val;
 				if (p == 0)
 				{
-					val = 255 - IVSthres / (t - tmp.t); 
+					val = 255 - IVSthres / (t - tmp.t);
 				}
 				else
 				{
@@ -112,9 +112,9 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 				}
 				val = clamp(val);
 				sevent_v = val;
-				for (int i = ceil(tmp.t) + eps; i <= t + eps; i++)
+				for (int i = ceil(tmp.t) + eps; i <= t + eps && i < totalframes; i++)
 				{
-					(*out_img[i]).at<uchar>(y, x) = val;
+					(*out_img[i]).at<uint16_t>(y, x) = val;
 				}
 				t = tmp.t;
 				p = tmp.p;
@@ -126,15 +126,15 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 				{
 					tmp = (*eventstack[idx]).top();
 					changepersec = DVSthres / (t - tmp.t);
-					for (int i = floor(t) + eps; i >= tmp.t - eps; i--)
+					for (int i = floor(t) + eps; i >= tmp.t - eps && i < totalframes; i--)
 					{
 						if (p == 0)
 						{
-							(*out_img[i]).at<uchar>(y, x) = clamp(val + (t - i) * changepersec);
+							(*out_img[i]).at<uint16_t>(y, x) = clamp(val + (t - i) * changepersec);
 						}
 						else
 						{
-							(*out_img[i]).at<uchar>(y, x) = clamp(val - (t - i) * changepersec);
+							(*out_img[i]).at<uint16_t>(y, x) = clamp(val - (t - i) * changepersec);
 						}
 					}
 					val = clamp(val + (-2 * p + 1) * DVSthres);
@@ -149,15 +149,15 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 				if (LastIval[idx] < 0)
 				{
 					changepersec = DVSthres / (t - Lastfinaltime[idx]);
-					for (int i = ceil(Lastfinaltime[idx]) + eps; i <= floor(t) + eps; i++)
+					for (int i = ceil(Lastfinaltime[idx]) + eps; i <= floor(t) + eps && i < totalframes; i++)
 					{
 						if (p == 0)
 						{
-							(*out_img[i]).at<uchar>(y, x) = clamp(val + (t - i) * changepersec);
+							(*out_img[i]).at<uint16_t>(y, x) = clamp(val + (t - i) * changepersec);
 						}
 						else
 						{
-							(*out_img[i]).at<uchar>(y, x) = clamp(val - (t - i) * changepersec);
+							(*out_img[i]).at<uint16_t>(y, x) = clamp(val - (t - i) * changepersec);
 						}
 					}
 				}
@@ -169,8 +169,8 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 						changepersec = (val - LastIval[idx]) / (t - Lastfinaltime[idx]);
 						for (int i = ceil(Lastfinaltime[idx]) + eps; i <= floor(t) + eps; i++)
 						{
-							//(*out_img[i]).at<uchar>(y, x) = clamp(val + (i - t) * changepersec);
-							(*out_img[i]).at<uchar>(y, x) = LastIval[idx];
+//							(*out_img[i]).at<uint16_t>(y, x) = clamp(val + (i - t) * changepersec);
+							(*out_img[i]).at<uint16_t>(y, x) = LastIval[idx];
 						}
 					}
 				}
@@ -182,7 +182,7 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 				int val;
 				if (p == 0)
 				{
-					val = 255 - IVSthres / (t - Lastfinaltime[idx]); 
+					val = 255 - IVSthres / (t - Lastfinaltime[idx]);
 				}
 				else
 				{
@@ -191,16 +191,37 @@ void ReconRetina::GenerateImages(int totalframes, std::ifstream& EventsFile)
 				val = clamp(val);
 				sevent_v = val;
 				for (int i = ceil(Lastfinaltime[idx]) + eps; i <= floor(t) + eps; i++)
-					(*out_img[i]).at<uchar>(y, x) = val;
+                    if (i < totalframes)
+					    (*out_img[i]).at<uint16_t>(y, x) = val;
 			}
 			Lastfinaltime[idx] = sevent_t;
 			LastIval[idx] = sevent_v;
-			Lasttime[idx] = sevent_t; 
+			Lasttime[idx] = sevent_t;
 		}
 	}
-	for (int i = 0; i < totalframes; i++)
-	{
-		snprintf(buffer, 256, output_fmt.c_str(), i);
-		cv::imwrite(buffer, *out_img[i]);
+
+    cv::Mat** out_img2;
+    out_img2 = new Mat* [totalframes];
+	for (int i = 0; i < totalframes; i++) {
+        out_img2[i] = new Mat(Size(width, height), CV_8UC1);
+        snprintf(buffer, 256, output_fmt.c_str(), i);
+        for (int xx = 0; xx < width; xx++) {
+            for (int yy = 0; yy < height; yy++){
+                if(i > 0 && (*out_img[i]).at<uint16_t>(yy, xx) == 256) {
+                    int ti = i - 1;
+                    while(ti > 0 && (*out_img[ti]).at<uint16_t>(yy, xx) == 256){
+                        ti--;
+                    }
+
+//                    (*out_img[i]).at<uint16_t>(yy, xx) = (*out_img[i - 1]).at<uint16_t>(yy, xx);
+                    uint16_t tmp0 = (*out_img[ti]).at<uint16_t>(yy, xx);
+                    uint8_t tmp = (uint8_t)(*out_img[ti]).at<uint16_t>(yy, xx);
+                    (*out_img2[i]).at<uint8_t>(yy, xx) = (uint8_t)(*out_img[ti]).at<uint16_t>(yy, xx);
+                } else {
+                    (*out_img2[i]).at<uint8_t>(yy, xx) = (uint8_t)(*out_img[i]).at<uint16_t>(yy, xx);
+                }
+            }
+        }
+		cv::imwrite(buffer, *out_img2[i]);
 	}
 }

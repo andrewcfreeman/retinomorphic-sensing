@@ -75,11 +75,11 @@ int main(int argc, char** argv)
 		VidarSimulator Vidar_simulator(WIDTH, HEIGHT, CHANNELS, IVSTHRES, true, LINEAR_FRAMES);
 
 		std::ofstream Retina_outstream;
-		Retina_outstream.open("out_Retina_" + output_filename, std::ios::binary);
+		Retina_outstream.open("out\\Retina_" + output_filename, std::ios::binary);
 //		std::ofstream FSM_outstream;
 //		FSM_outstream.open("out_FSM_" + output_filename, std::ios::binary);
 		std::ofstream DAVIS_outstream;
-		DAVIS_outstream.open("out_DAVIS_" + output_filename, std::ios::binary);
+		DAVIS_outstream.open("out\\DAVIS_" + output_filename, std::ios::binary);
 //		std::ofstream ATIS_outstream;
 //		ATIS_outstream.open("out_ATIS_" + output_filename, std::ios::binary);
 //		std::ofstream CeleX_outstream;
